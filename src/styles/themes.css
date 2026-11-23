@@ -1,0 +1,214 @@
+/* Authentic GitHub Light & GitHub Dark (Primer) color tokens */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  /* Surfaces */
+  --bg-default: #ffffff;
+  --bg-subtle: #f6f8fa;
+  --bg-inset: #eff2f5;
+  --bg-overlay: #ffffff;
+  --bg-hover: rgba(208, 215, 222, 0.32);
+  --bg-active: rgba(9, 105, 218, 0.08);
+  --bg-neutral-muted: rgba(175, 184, 193, 0.2);
+  --bg-attention-subtle: #fff8c5;
+  --bg-danger-subtle: #ffebe9;
+  --bg-success-subtle: #dafbe1;
+  --bg-accent-subtle: #ddf4ff;
+
+  /* Foreground / Text */
+  --fg-default: #1f2328;
+  --fg-muted: #656d76;
+  --fg-subtle: #6e7781;
+  --fg-on-emphasis: #ffffff;
+
+  /* Borders */
+  --border-default: #d0d7de;
+  --border-muted: #d8dee4;
+  --border-subtle: rgba(31, 35, 40, 0.12);
+
+  /* Accents & Buttons */
+  --accent-fg: #0969da;
+  --accent-emphasis: #0969da;
+  --accent-ring: rgba(9, 105, 218, 0.3);
+
+  --btn-bg: #f6f8fa;
+  --btn-hover-bg: #f3f4f6;
+  --btn-border: rgba(31, 35, 40, 0.15);
+  --btn-primary-bg: #1f883d;
+  --btn-primary-hover-bg: #1a7f37;
+  --btn-primary-border: rgba(31, 35, 40, 0.15);
+
+  --danger-fg: #cf222e;
+  --danger-emphasis: #cf222e;
+  --danger-hover-bg: #a40e26;
+  --success-fg: #1a7f37;
+  --attention-fg: #9a6700;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 0 rgba(31, 35, 40, 0.04);
+  --shadow-md: 0 3px 6px rgba(140, 149, 159, 0.15);
+  --shadow-lg: 0 8px 24px rgba(140, 149, 159, 0.22);
+
+  /* Syntax Highlighting (GitHub Light) */
+  --hljs-fg: #24292e;
+  --hljs-keyword: #cf222e;
+  --hljs-entity: #8250df;
+  --hljs-constant: #0550ae;
+  --hljs-string: #0a3069;
+  --hljs-variable: #953800;
+  --hljs-comment: #6e7781;
+  --hljs-tag: #116329;
+  --hljs-addition-fg: #116329;
+  --hljs-addition-bg: #dafbe1;
+  --hljs-deletion-fg: #82071e;
+  --hljs-deletion-bg: #ffebe9;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg-default: #0d1117;
+  --bg-subtle: #161b22;
+  --bg-inset: #010409;
+  --bg-overlay: #161b22;
+  --bg-hover: rgba(177, 186, 196, 0.12);
+  --bg-active: rgba(56, 139, 253, 0.15);
+  --bg-neutral-muted: rgba(110, 118, 129, 0.35);
+  --bg-attention-subtle: rgba(187, 128, 9, 0.15);
+  --bg-danger-subtle: rgba(248, 81, 73, 0.12);
+  --bg-success-subtle: rgba(46, 160, 67, 0.15);
+  --bg-accent-subtle: rgba(56, 139, 253, 0.15);
+
+  /* Foreground / Text */
+  --fg-default: #e6edf3;
+  --fg-muted: #8b949e;
+  --fg-subtle: #6e7681;
+  --fg-on-emphasis: #ffffff;
+
+  /* Borders */
+  --border-default: #30363d;
+  --border-muted: #21262d;
+  --border-subtle: rgba(240, 246, 252, 0.1);
+
+  /* Accents & Buttons */
+  --accent-fg: #58a6ff;
+  --accent-emphasis: #1f6feb;
+  --accent-ring: rgba(56, 139, 253, 0.4);
+
+  --btn-bg: #21262d;
+  --btn-hover-bg: #30363d;
+  --btn-border: rgba(240, 246, 252, 0.1);
+  --btn-primary-bg: #238636;
+  --btn-primary-hover-bg: #2ea043;
+  --btn-primary-border: rgba(240, 246, 252, 0.1);
+
+  --danger-fg: #f85149;
+  --danger-emphasis: #da3633;
+  --danger-hover-bg: #b62324;
+  --success-fg: #3fb950;
+  --attention-fg: #d29922;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 0 rgba(1, 4, 9, 0.25);
+  --shadow-md: 0 3px 6px rgba(1, 4, 9, 0.4);
+  --shadow-lg: 0 12px 32px rgba(1, 4, 9, 0.65);
+
+  /* Syntax Highlighting (GitHub Dark) */
+  --hljs-fg: #c9d1d9;
+  --hljs-keyword: #ff7b72;
+  --hljs-entity: #d2a8ff;
+  --hljs-constant: #79c0ff;
+  --hljs-string: #a5d6ff;
+  --hljs-variable: #ffa657;
+  --hljs-comment: #8b949e;
+  --hljs-tag: #7ee787;
+  --hljs-addition-fg: #aff5b4;
+  --hljs-addition-bg: #033a16;
+  --hljs-deletion-fg: #ffdcd7;
+  --hljs-deletion-bg: #67060c;
+}
+
+/* Highlight.js token rules using GitHub variables */
+.hljs {
+  color: var(--hljs-fg);
+  background: transparent;
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+  color: var(--hljs-keyword);
+}
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  color: var(--hljs-entity);
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  color: var(--hljs-constant);
+}
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  color: var(--hljs-string);
+}
+.hljs-built_in,
+.hljs-symbol {
+  color: var(--hljs-variable);
+}
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+  color: var(--hljs-comment);
+}
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+  color: var(--hljs-tag);
+}
+.hljs-subst {
+  color: var(--hljs-fg);
+}
+.hljs-section {
+  color: var(--hljs-constant);
+  font-weight: 700;
+}
+.hljs-bullet {
+  color: var(--hljs-variable);
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
+.hljs-addition {
+  color: var(--hljs-addition-fg);
+  background-color: var(--hljs-addition-bg);
+}
+.hljs-deletion {
+  color: var(--hljs-deletion-fg);
+  background-color: var(--hljs-deletion-bg);
+}
