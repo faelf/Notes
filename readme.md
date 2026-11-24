@@ -81,10 +81,10 @@ The container runs **completely self-contained** with no host volumes — `.env`
    ```
 
    - Runs as non-root `node` (UID `1000`) with `cap_drop: [ALL]` and `no-new-privileges:true`.
-   - Automatically binds `0.0.0.0:3000` inside Docker (via `FORCE_BIND_ALL=true`), exposed only on `127.0.0.1:3000` by default (remove `ports:` in `docker-compose.yml` if running the `cloudflared` sidecar in the same Compose network).
+   - Automatically binds `0.0.0.0:3000` inside Docker and publishes host port `8007` (`http://<homelab-host>:8007`).
 
 3. Connect your **Cloudflare Tunnel**:
-   - In **Cloudflare Zero Trust → Networks → Tunnels**, point your public hostname (e.g. `notes.yourdomain.com`) to `http://notes:3000` (Docker network) or `http://127.0.0.1:3000`.
+   - In **Cloudflare Zero Trust → Networks → Tunnels**, point your public hostname (e.g. `notes.yourdomain.com`) to `http://notes:3000` (Docker network) or `http://127.0.0.1:8007`.
    - **Recommended**: Add a **Cloudflare Access** policy in front of your hostname for edge MFA (email OTP, GitHub/Google SSO, or Passkey).
 
 ## Important Notes (Volume-Free Container)

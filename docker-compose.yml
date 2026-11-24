@@ -3,26 +3,15 @@ services:
     build: .
     container_name: notes
     restart: unless-stopped
-    # Least-privilege container hardening
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     ports:
-      # Bound to localhost only; remove `ports:` completely if using the cloudflared service below
-      - "127.0.0.1:3000:3000"
+      - "8007:3000"
+    networks:
+      - cloudflare
 
-  # Optional: run cloudflared right beside notes in the same Docker network.
-  # When enabled, you can remove the `ports:` section above so port 3000 is never exposed on the host.
-  # In Cloudflare Zero Trust -> Networks -> Tunnels, point your public hostname
-  # (e.g. notes.yourdomain.com) to: http://notes:3000
-  #
-  # cloudflared:
-  #   image: cloudflare/cloudflared:latest
-  #   container_name: notes-tunnel
-  #   restart: unless-stopped
-  #   command: tunnel --no-autoupdate run
-  #   environment:
-  #     - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-  #   depends_on:
-  #     - notes
+networks:
+  cloudflare:
+    external: true

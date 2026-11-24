@@ -1,57 +1,69 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   BookOpen,
   PanelLeft,
   Search,
-  Sun,
-  Moon,
   LogOut,
   Settings,
   Edit3,
   Columns2,
   Eye,
-  Check,
-  Loader2,
-  Circle,
-  AlertTriangle,
+  Menu,
 } from 'lucide-react';
-import { ShortcutKey, formatShortcut } from './ShortcutKey.jsx';
+import { ShortcutKey } from './ShortcutKey.jsx';
+import { Tooltip } from './Tooltip.jsx';
 
 export function Header({
   activePath,
-  saveStatus,
   viewMode,
   onChangeViewMode,
   sidebarOpen,
   onToggleSidebar,
   onOpenSearch,
-  theme,
-  onToggleTheme,
   onOpenSettings,
   username,
   onLogout,
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuWrapRef = useRef(null);
   const pathParts = activePath ? activePath.split('/') : [];
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onPointerDown = (e) => {
+      if (menuWrapRef.current && !menuWrapRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [menuOpen]);
 
   return (
     <header className="app-header">
       <div className="header-left">
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={onToggleSidebar}
-          title={
-            sidebarOpen
-              ? `Hide sidebar (${formatShortcut('B')})`
-              : `Show sidebar (${formatShortcut('B')})`
-          }
-          aria-label="Toggle sidebar"
-        >
-          <PanelLeft size={17} />
-        </button>
+        <Tooltip label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'} shortcut="B">
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={onToggleSidebar}
+            aria-label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
+          >
+            <PanelLeft size={16} />
+          </button>
+        </Tooltip>
+
+        <div className="header-divider" />
 
         <div className="header-brand">
-          <BookOpen size={17} />
+          <BookOpen size={16} />
           <span>Notes</span>
         </div>
 
@@ -77,106 +89,126 @@ export function Header({
 
       <div className="header-right">
         {activePath && (
-          <div className={`save-badge ${saveStatus}`} title="Save status">
-            {saveStatus === 'saved' && (
-              <>
-                <Check size={13} />
-                <span>Saved</span>
-              </>
-            )}
-            {saveStatus === 'saving' && (
-              <>
-                <Loader2 size={13} className="spin" />
-                <span>Saving…</span>
-              </>
-            )}
-            {saveStatus === 'unsaved' && (
-              <>
-                <Circle size={8} fill="currentColor" />
-                <span>Unsaved</span>
-              </>
-            )}
-            {saveStatus === 'error' && (
-              <>
-                <AlertTriangle size={13} />
-                <span>Save failed</span>
-              </>
-            )}
+          <div className="btn-group" role="group" aria-label="Editor view mode">
+            <Tooltip label="Edit Markdown">
+              <button
+                type="button"
+                className={`btn-group-item${viewMode === 'edit' ? ' active' : ''}`}
+                onClick={() => onChangeViewMode('edit')}
+              >
+                <Edit3 size={13} />
+                <span>Edit</span>
+              </button>
+            </Tooltip>
+            <Tooltip label="Split editor & preview">
+              <button
+                type="button"
+                className={`btn-group-item split-only${viewMode === 'split' ? ' active' : ''}`}
+                onClick={() => onChangeViewMode('split')}
+              >
+                <Columns2 size={13} />
+                <span>Split</span>
+              </button>
+            </Tooltip>
+            <Tooltip label="Preview Markdown" shortcut="E">
+              <button
+                type="button"
+                className={`btn-group-item${viewMode === 'preview' ? ' active' : ''}`}
+                onClick={() => onChangeViewMode('preview')}
+              >
+                <Eye size={13} />
+                <span>Preview</span>
+              </button>
+            </Tooltip>
           </div>
         )}
 
-        {activePath && (
-          <div className="segmented-control" role="group" aria-label="Editor view mode">
+        <Tooltip label="Quick switcher & search" shortcut="K">
+          <button
+            type="button"
+            className="search-trigger"
+            onClick={onOpenSearch}
+            aria-label="Search notes"
+          >
+            <span className="search-trigger-left">
+              <Search size={14} />
+              <span className="search-label">Search notes</span>
+            </span>
+            <ShortcutKey letter="K" />
+          </button>
+        </Tooltip>
+
+        {/* Desktop actions (> 900px) */}
+        <div className="header-desktop-actions">
+          <Tooltip label="Settings">
             <button
               type="button"
-              className={`segmented-btn${viewMode === 'edit' ? ' active' : ''}`}
-              onClick={() => onChangeViewMode('edit')}
-              title="Edit Markdown"
+              className="icon-btn header-control-btn"
+              onClick={onOpenSettings}
+              aria-label="Open settings"
             >
-              <Edit3 size={13} />
-              <span>Edit</span>
+              <Settings size={15} />
             </button>
+          </Tooltip>
+
+          <Tooltip label={`Sign out (${username})`}>
             <button
               type="button"
-              className={`segmented-btn split-only${viewMode === 'split' ? ' active' : ''}`}
-              onClick={() => onChangeViewMode('split')}
-              title="Split Edit & Preview"
+              className="btn btn-logout"
+              onClick={onLogout}
+              aria-label="Sign out"
             >
-              <Columns2 size={13} />
-              <span>Split</span>
+              <LogOut size={14} />
+              <span>Logout</span>
             </button>
+          </Tooltip>
+        </div>
+
+        {/* Mobile / narrow burger menu (<= 900px) */}
+        <div className="header-mobile-menu" ref={menuWrapRef}>
+          <Tooltip label="Menu">
             <button
               type="button"
-              className={`segmented-btn${viewMode === 'preview' ? ' active' : ''}`}
-              onClick={() => onChangeViewMode('preview')}
-              title={`Preview Markdown (${formatShortcut('E')})`}
+              className="icon-btn header-control-btn"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-haspopup="menu"
             >
-              <Eye size={13} />
-              <span>Preview</span>
+              <Menu size={16} />
             </button>
-          </div>
-        )}
+          </Tooltip>
 
-        <button
-          type="button"
-          className="search-trigger"
-          onClick={onOpenSearch}
-          title={`Quick switcher & search (${formatShortcut('K')})`}
-        >
-          <Search size={14} />
-          <span className="search-label">Search notes</span>
-          <ShortcutKey letter="K" />
-        </button>
-
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={onToggleTheme}
-          title={theme === 'dark' ? 'Switch to GitHub Light' : 'Switch to GitHub Dark'}
-          aria-label="Toggle color theme"
-        >
-          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
-
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={onOpenSettings}
-          title="Settings"
-          aria-label="Open settings"
-        >
-          <Settings size={16} />
-        </button>
-
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={onLogout}
-          title={`Sign out (${username})`}
-          aria-label="Sign out"
-        >
-          <LogOut size={16} />
-        </button>
+          {menuOpen && (
+            <div className="dropdown-menu header-burger-dropdown" role="menu">
+              <button
+                type="button"
+                className="dropdown-item"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onOpenSettings();
+                }}
+              >
+                <Settings size={14} />
+                <span>Settings</span>
+              </button>
+              <div className="dropdown-divider" />
+              <button
+                type="button"
+                className="dropdown-item dropdown-item-danger"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onLogout();
+                }}
+              >
+                <LogOut size={14} />
+                <span>Logout</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -11,10 +11,24 @@ import {
   CheckCircle2,
   FileKey,
   Check,
+  Palette,
+  SlidersHorizontal,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { api } from '../api.js';
+import { Tooltip } from './Tooltip.jsx';
 
-export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpdated }) {
+export function SettingsModal({
+  open,
+  onClose,
+  theme,
+  onChangeTheme,
+  autoSave,
+  onToggleAutoSave,
+  onCredentialsUpdated,
+  onFolderUpdated,
+}) {
   const [activeTab, setActiveTab] = useState('account');
   const [loading, setLoading] = useState(false);
 
@@ -205,7 +219,7 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
         folderName: res.folderName,
       }));
       setLocatorOpen(false);
-      setFolderSuccess(`Switched active folder to "${res.folderName}" and saved to .env.`);
+      setFolderSuccess(`Switched active folder to "${res.folderName}".`);
       onFolderUpdated?.(res);
     } catch (err) {
       setFolderError(err.message || 'Failed to update folder location');
@@ -217,7 +231,9 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div
-        className={`modal-card settings-modal-card${locatorOpen && activeTab === 'folder' ? ' wide' : ''}`}
+        className={`modal-card settings-modal-card${
+          locatorOpen && activeTab === 'folder' ? ' wide' : ''
+        }`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -225,9 +241,16 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
       >
         <div className="modal-header">
           <h3 className="modal-title">Settings</h3>
-          <button type="button" className="icon-btn sm" onClick={onClose} aria-label="Close settings">
-            <X size={15} />
-          </button>
+          <Tooltip label="Close">
+            <button
+              type="button"
+              className="icon-btn sm"
+              onClick={onClose}
+              aria-label="Close settings"
+            >
+              <X size={15} />
+            </button>
+          </Tooltip>
         </div>
 
         <div className="settings-tabs" role="tablist">
@@ -249,26 +272,48 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
             onClick={() => setActiveTab('folder')}
           >
             <Folder size={14} />
-            <span>Folder location</span>
+            <span>Folder</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'appearance'}
+            className={`settings-tab${activeTab === 'appearance' ? ' active' : ''}`}
+            onClick={() => setActiveTab('appearance')}
+          >
+            <Palette size={14} />
+            <span>Appearance</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'behaviour'}
+            className={`settings-tab${activeTab === 'behaviour' ? ' active' : ''}`}
+            onClick={() => setActiveTab('behaviour')}
+          >
+            <SlidersHorizontal size={14} />
+            <span>Behaviour</span>
           </button>
         </div>
 
-        {loading ? (
-          <div className="modal-body" style={{ color: 'var(--fg-muted)', fontSize: 13 }}>
-            Loading settings…
+        {loading && (activeTab === 'account' || activeTab === 'folder') ? (
+          <div className="settings-tab-panel">
+            <div className="modal-body" style={{ color: 'var(--fg-muted)', fontSize: 13 }}>
+              Loading settings…
+            </div>
           </div>
         ) : activeTab === 'account' ? (
-          <form onSubmit={handleSaveAccount}>
+          <form className="settings-tab-panel" onSubmit={handleSaveAccount}>
             <div className="modal-body">
               {accountError && (
                 <div className="settings-alert error" role="alert">
-                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                  <AlertCircle size={15} />
                   <span>{accountError}</span>
                 </div>
               )}
               {accountSuccess && (
                 <div className="settings-alert success" role="status">
-                  <CheckCircle2 size={15} style={{ flexShrink: 0 }} />
+                  <CheckCircle2 size={15} />
                   <span>{accountSuccess}</span>
                 </div>
               )}
@@ -339,7 +384,7 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
               </div>
 
               <div className="settings-env-note">
-                <FileKey size={13} style={{ flexShrink: 0 }} />
+                <FileKey size={13} />
                 <span>
                   Saves to <code>.env</code> as a salted <code>scrypt</code> hash (
                   <code>AUTH_PASSWORD_HASH</code>).
@@ -360,18 +405,18 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
               </button>
             </div>
           </form>
-        ) : (
+        ) : activeTab === 'folder' ? (
           <div className="settings-tab-panel">
             <div className="modal-body">
               {folderError && (
                 <div className="settings-alert error" role="alert">
-                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                  <AlertCircle size={15} />
                   <span>{folderError}</span>
                 </div>
               )}
               {folderSuccess && (
                 <div className="settings-alert success" role="status">
-                  <CheckCircle2 size={15} style={{ flexShrink: 0 }} />
+                  <CheckCircle2 size={15} />
                   <span>{folderSuccess}</span>
                 </div>
               )}
@@ -437,7 +482,6 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
                             type="button"
                             className={`locator-crumb-btn${crumb.isHome ? ' is-home' : ''}`}
                             onClick={() => loadDirectory(crumb.path, showHidden)}
-                            title={crumb.isHome ? `Home (${crumb.path})` : crumb.path}
                             aria-label={crumb.isHome ? 'Home folder' : crumb.name}
                           >
                             {crumb.isHome ? <Home size={13} /> : crumb.name}
@@ -446,15 +490,16 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
                       ))}
                     </div>
 
-                    <button
-                      type="button"
-                      className="icon-btn sm"
-                      onClick={() => setCreatingSubdir((v) => !v)}
-                      title="Create new subfolder here"
-                      aria-label="Create new subfolder"
-                    >
-                      <FolderPlus size={14} />
-                    </button>
+                    <Tooltip label="Create new subfolder">
+                      <button
+                        type="button"
+                        className="icon-btn sm"
+                        onClick={() => setCreatingSubdir((v) => !v)}
+                        aria-label="Create new subfolder"
+                      >
+                        <FolderPlus size={14} />
+                      </button>
+                    </Tooltip>
                   </div>
 
                   {creatingSubdir && (
@@ -575,6 +620,112 @@ export function SettingsModal({ open, onClose, onCredentialsUpdated, onFolderUpd
                   Close
                 </button>
               )}
+            </div>
+          </div>
+        ) : activeTab === 'appearance' ? (
+          <div className="settings-tab-panel">
+            <div className="modal-body">
+              <div className="settings-section-title">Theme</div>
+              <p className="settings-section-desc">
+                Choose how Notes looks. Saved automatically in your browser.
+              </p>
+
+              <div className="theme-picker-grid" role="radiogroup" aria-label="Color theme">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={theme === 'light'}
+                  className={`theme-option-card${theme === 'light' ? ' active' : ''}`}
+                  onClick={() => onChangeTheme('light')}
+                >
+                  <div className="theme-preview light">
+                    <div className="theme-preview-bar" />
+                    <div className="theme-preview-body">
+                      <div className="theme-preview-sidebar" />
+                      <div className="theme-preview-content">
+                        <div className="theme-preview-line short" />
+                        <div className="theme-preview-line" />
+                        <div className="theme-preview-line medium" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="theme-option-footer">
+                    <span className="theme-option-label">
+                      <Sun size={14} />
+                      <span>GitHub Light</span>
+                    </span>
+                    {theme === 'light' && <Check size={14} className="theme-option-check" />}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={theme === 'dark'}
+                  className={`theme-option-card${theme === 'dark' ? ' active' : ''}`}
+                  onClick={() => onChangeTheme('dark')}
+                >
+                  <div className="theme-preview dark">
+                    <div className="theme-preview-bar" />
+                    <div className="theme-preview-body">
+                      <div className="theme-preview-sidebar" />
+                      <div className="theme-preview-content">
+                        <div className="theme-preview-line short" />
+                        <div className="theme-preview-line" />
+                        <div className="theme-preview-line medium" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="theme-option-footer">
+                    <span className="theme-option-label">
+                      <Moon size={14} />
+                      <span>GitHub Dark</span>
+                    </span>
+                    {theme === 'dark' && <Check size={14} className="theme-option-check" />}
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button type="button" className="btn" onClick={onClose}>
+                Close
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="settings-tab-panel">
+            <div className="modal-body">
+              <div className="settings-section-title">Editor behaviour</div>
+              <p className="settings-section-desc">
+                Configure how your notes are saved while you write.
+              </p>
+
+              <div className="settings-toggle-card">
+                <div className="settings-toggle-info">
+                  <div className="settings-toggle-title">Auto-save</div>
+                  <div className="settings-toggle-desc">
+                    Automatically save changes shortly after you stop typing. You can still save
+                    manually anytime.
+                  </div>
+                </div>
+                <label className="switch" aria-label="Toggle auto-save">
+                  <input
+                    type="checkbox"
+                    checked={autoSave}
+                    onChange={(e) => onToggleAutoSave(e.target.checked)}
+                  />
+                  <span className="switch-track">
+                    <span className="switch-thumb" />
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button type="button" className="btn" onClick={onClose}>
+                Close
+              </button>
             </div>
           </div>
         )}

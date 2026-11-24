@@ -13,6 +13,7 @@ import {
   Search,
   X,
 } from 'lucide-react';
+import { Tooltip } from './Tooltip.jsx';
 
 function filterTree(nodes, query) {
   if (!query) return nodes;
@@ -103,40 +104,48 @@ function TreeNode({
         >
           {isFolder && (
             <>
-              <button
-                type="button"
-                className="icon-btn sm"
-                title={`New note in ${node.name}`}
-                onClick={() => onNewFileIn(node.path)}
-              >
-                <FilePlus size={13} />
-              </button>
-              <button
-                type="button"
-                className="icon-btn sm"
-                title={`New folder in ${node.name}`}
-                onClick={() => onNewFolderIn(node.path)}
-              >
-                <FolderPlus size={13} />
-              </button>
+              <Tooltip label={`New note in ${node.name}`}>
+                <button
+                  type="button"
+                  className="icon-btn sm"
+                  aria-label={`New note in ${node.name}`}
+                  onClick={() => onNewFileIn(node.path)}
+                >
+                  <FilePlus size={13} />
+                </button>
+              </Tooltip>
+              <Tooltip label={`New folder in ${node.name}`}>
+                <button
+                  type="button"
+                  className="icon-btn sm"
+                  aria-label={`New folder in ${node.name}`}
+                  onClick={() => onNewFolderIn(node.path)}
+                >
+                  <FolderPlus size={13} />
+                </button>
+              </Tooltip>
             </>
           )}
-          <button
-            type="button"
-            className="icon-btn sm"
-            title={`Rename ${node.name}`}
-            onClick={() => onRename(node)}
-          >
-            <Pencil size={13} />
-          </button>
-          <button
-            type="button"
-            className="icon-btn sm danger"
-            title={`Delete ${node.name}`}
-            onClick={() => onDelete(node)}
-          >
-            <Trash2 size={13} />
-          </button>
+          <Tooltip label={`Rename ${node.name}`}>
+            <button
+              type="button"
+              className="icon-btn sm"
+              aria-label={`Rename ${node.name}`}
+              onClick={() => onRename(node)}
+            >
+              <Pencil size={13} />
+            </button>
+          </Tooltip>
+          <Tooltip label={`Delete ${node.name}`}>
+            <button
+              type="button"
+              className="icon-btn sm danger"
+              aria-label={`Delete ${node.name}`}
+              onClick={() => onDelete(node)}
+            >
+              <Trash2 size={13} />
+            </button>
+          </Tooltip>
         </div>
       </div>
 
@@ -192,33 +201,36 @@ export function Sidebar({
             <span className="sidebar-title-text">{folderName || 'Folder'}</span>
           </div>
           <div className="sidebar-actions">
-            <button
-              type="button"
-              className="icon-btn sm"
-              onClick={() => onNewFile('')}
-              title="New note"
-              aria-label="New note"
-            >
-              <FilePlus size={15} />
-            </button>
-            <button
-              type="button"
-              className="icon-btn sm"
-              onClick={() => onNewFolder('')}
-              title="New folder"
-              aria-label="New folder"
-            >
-              <FolderPlus size={15} />
-            </button>
-            <button
-              type="button"
-              className="icon-btn sm"
-              onClick={onRefresh}
-              title="Refresh folder"
-              aria-label="Refresh folder"
-            >
-              <RefreshCw size={14} />
-            </button>
+            <Tooltip label="New note">
+              <button
+                type="button"
+                className="icon-btn sm"
+                onClick={() => onNewFile('')}
+                aria-label="New note"
+              >
+                <FilePlus size={15} />
+              </button>
+            </Tooltip>
+            <Tooltip label="New folder">
+              <button
+                type="button"
+                className="icon-btn sm"
+                onClick={() => onNewFolder('')}
+                aria-label="New folder"
+              >
+                <FolderPlus size={15} />
+              </button>
+            </Tooltip>
+            <Tooltip label="Refresh folder">
+              <button
+                type="button"
+                className="icon-btn sm"
+                onClick={onRefresh}
+                aria-label="Refresh folder"
+              >
+                <RefreshCw size={14} />
+              </button>
+            </Tooltip>
           </div>
         </div>
 

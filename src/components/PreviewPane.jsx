@@ -40,8 +40,8 @@ export function PreviewPane({ content, onToggleCheckbox, onOpenWikilink }) {
         {frontmatter && (
           <div className="frontmatter-card" aria-label="Note properties">
             {frontmatter.map((item, idx) => (
-              <div className="frontmatter-item" key={`${item.key}-${idx}`}>
-                <span className="frontmatter-key">{item.key}:</span>
+              <div className="frontmatter-row" key={`${item.key}-${idx}`}>
+                <span className="frontmatter-key">{item.key}</span>
                 <span className="frontmatter-value">{item.value}</span>
               </div>
             ))}

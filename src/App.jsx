@@ -65,7 +65,14 @@ export default function App() {
   const [savedContent, setSavedContent] = useState('');
   const [updatedAt, setUpdatedAt] = useState('');
   const [saveStatus, setSaveStatus] = useState('saved');
-  const [autoSave, setAutoSave] = useState(true);
+  const [autoSave, setAutoSave] = useState(() => {
+    try {
+      const saved = localStorage.getItem('notes-autosave');
+      if (saved === 'false') return false;
+      if (saved === 'true') return true;
+    } catch {}
+    return true;
+  });
   const [viewMode, setViewMode] = useState(() => {
     try {
       const saved =
@@ -110,6 +117,12 @@ export default function App() {
       localStorage.setItem('notes-view-mode', viewMode);
     } catch {}
   }, [viewMode]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('notes-autosave', String(autoSave));
+    } catch {}
+  }, [autoSave]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -507,14 +520,11 @@ export default function App() {
     <div className="app-shell">
       <Header
         activePath={activePath}
-        saveStatus={saveStatus}
         viewMode={viewMode}
         onChangeViewMode={setViewMode}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen((v) => !v)}
         onOpenSearch={() => setSwitcherOpen(true)}
-        theme={theme}
-        onToggleTheme={toggleTheme}
         onOpenSettings={() => setSettingsOpen(true)}
         username={authState.username}
         onLogout={handleLogout}
@@ -542,8 +552,6 @@ export default function App() {
             content={content}
             updatedAt={updatedAt}
             viewMode={viewMode}
-            autoSave={autoSave}
-            onToggleAutoSave={setAutoSave}
             saveStatus={saveStatus}
             onChangeContent={handleChangeContent}
             onSaveNow={() => {
@@ -636,6 +644,10 @@ export default function App() {
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
+        theme={theme}
+        onChangeTheme={setTheme}
+        autoSave={autoSave}
+        onToggleAutoSave={setAutoSave}
         onCredentialsUpdated={handleCredentialsUpdated}
         onFolderUpdated={handleFolderUpdated}
       />
